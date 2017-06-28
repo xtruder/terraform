@@ -13,56 +13,63 @@ Additionally, plans are run when a pull request is created or updated. Terraform
 Enterprise will update the pull request with the result of the Terraform plan
 providing quick feedback on proposed changes.
 
-## Registering an OAuth Application & Client
+## Setup an Organization to use Bitbucket Cloud
 
-### Creating and Updating a Bitbucket Cloud OAuth Application
+### Create a Bitbucket Cloud OAuth Consumer
 
-You will need to register Terraform Enterprise as an OAuth Application within your Bitbucket Cloud account. Proceed to https://bitbucket.org/account/user/your-username/oauth-consumers/new. Fill out the required information and set the Redirect URI to a placeholder (ie: http://example.com), as you will need to register the Bitbucket Client with Terraform Enterprise prior to receiving this value. Check all of the permission fields that apply to you, and click Save
+You need to register Terraform Enterprise as an OAuth consumer within your Bitbucket Cloud account. Proceed to https://bitbucket.org/account/user/your-username/oauth-consumers/new. Fill out the form with the following information.
 
-Upon saving the application, you will be redirected to https://bitbucket.org/account/user/your-username/api. Scroll down to OAuth Consumers and click on the application you just created. Copy the Key and Secret. Leave this tab open in your browser as you will need to return to it in a moment.
+- **Name**: Terraform Enterprise (or whatever you want)
+- **Callback URL**: Skip this one for now. You will need to come back and fill it in later.
 
-### Creating a Terraform Enterprise OAuth Client
+The following **Permissions** are required:
 
-In a new tab, navigate to https://atlas.hashicorp.com/settings and, in the left-side panel, select the organization that you’d like to administer your Bitbucket connection, then click on “configuration” in the left-side panel.
+- **Account**: Email, Read, Write
+- **Repositories**: Read, Write, Admin
+- **Pull requests**: Read, Write
+- **Webhooks**: Read and write
 
-Within the “Add OAuthClient” pane, select Bitbucket Cloud and fill in your application key and secret. In the base url field, enter the root url of your Bitbucket instance (i.e. https://bitbucket.org). In the API url field, enter the base api url (i.e. https://api.bitbucket.org/2.0). Create the OAuth client.
+Upon saving, you will be redirected to https://bitbucket.org/account/user/your-username/api. 
 
-Once you have created your client, you will be redirected back to the configurations page for your chosen organization. On that page, find the “OAuth Clients” pane and copy the Callback URL for your Bitbucket Cloud OAuth Client. In the open Bitbucket tab, select the Terraform Enterprise OAuth Application and click edit. Enter the Callback URL you just copied in the field labeled Redirect URI. Save the application.
+1. Scroll down to the **OAuth consumers** section and click on the consumer you just created
+2. Copy the **Key** and **Secret**
+3. Leave this tab open in your browser as you will need to return to it in a moment.
 
-Your OAuth Client should now be enabled for your Organization to use within Terraform Enterprise.
+### Create a Terraform Enterprise OAuth Client
 
-## Using Terraform Enterprise with Bitbucket Cloud
+In a new tab, navigate to https://atlas.hashicorp.com/settings and, in the left-side panel, select the Organization that you’d like to setup to use with Bitbucket Cloud. Then click on **Configuration** in the left-side panel.
 
-There are two ways to connect your preferred VCS Host to Terraform Enterprise.
-You can generate an OAuth token both at the user and organization level.
+Scroll down to the **Add OAuthClient** pane and fill out the form with the following information.
 
-### Linking your Terraform Enterprise Organization
+- **Oauth client**: Bitbucket Cloud
+- **Application key**: Key (from Bitbucket Cloud in the previous section)
+- **Base url**: https://bitbucket.org
+- **Api url**: https://api.bitbucket.org/2.0
+- **Application secret**: Secret (from Bitbucket Cloud in the previous section)
 
-Return to the settings page for the organization in which you created the OAuth Client (https://atlas.hashicorp.com/settings/organizations/your-organization/configuration). Find the section entitled Organization Connections to OAuth Client and click connect beneath your Bitbucket Cloud integration. You will be briefly redirected to Bitbucket in order to authenticate the client.
+Once you have created your client, you will be redirected back to the **Configuration** page for your chosen Organization. On that page, find the **OAuth Clients** pane and copy the **Callback url** for Bitbucket Cloud. Leave this tab open in your browser as you will need to return to it in a moment.
 
-Once you are redirected back to Terraform Enterprise, you should see that the token was created with a unique identifier. If you don’t, check the values in your OAuth Client and make sure they match exactly with the values associated with your Bitbucket OAuth Application. There is also an option to destroy the token and disconnect the organization from your Bitbucket installation.
+Back in the open Bitbucket tab, select the Terraform Enterprise OAuth consumer and click edit. Enter the **Callback url** you just copied in the field labeled **Callback URL**. Save the OAuth consumer.
 
-You are now ready to use your organization's token to manage builds and configurations within Terraform Enterprise.
+### Connect a Bitbucket Cloud User to Organization
 
-### Linking your Terraform Enterprise User Account
+Back on the **Configuration** page for your Terraform Enterprise Organization, in the **OAuth Connections** pane, you can now connect your organization to Bitbucket Cloud by clicking **Connect**. You will be briefly redirected to Bitbucket Cloud in order to authenticate the client. You should be successfuly redirected back to Terraform Enterprise. If you are not, check the values in your OAuth client and make sure they match exactly with the values associated with your Bitbucket OAuth consumer.
 
-Navigate to https://atlas.hashicorp.com/settings/connections and click on “Connect Bitbucket Cloud to Atlas”. You will briefly be redirected to Bitbucket in order to authenticate your OAuth Client. Once redirected back to Terraform Enterprise, You should see a green flash banner with the message: "Successfully Linked to Bitbucket".
-
-You are now ready to use your personal token to manage builds and configurations within Terraform Enterprise.
+The Terraform Enterprise Bitbucket Cloud integration is now ready your Organization to start using.
 
 ## Connecting Configurations
 
-Once you have linked a Bitbucket installation to your account or organization,
+Once you have linked a Bitbucket installation to your Organization,
 you are ready to begin creating Packer Builds and Terraform Environments linked
 to your desired Bitbucket Cloud repository.
 
-Terraform Enterprise environments are linked to individual GitHub repositories.
-However, a single GitHub repository can be linked to multiple environments
+Terraform Enterprise environments are linked to individual Bitbucket Cloud repositories.
+However, a single Bitbucket Cloud repository can be linked to multiple environments
 allowing a single set of Terraform configuration to be used across multiple
 environments.
 
 Environments can be linked when they're initially created using the New
-Environment process. Existing environments can be linked by setting GitHub
+Environment process. Existing environments can be linked by setting Bitbucket Cloud
 details in their **Integrations**.
 
 To link a Terraform Enterprise environment to a Bitbucket Cloud repository, you need
@@ -72,14 +79,16 @@ three pieces of information:
 format _username/repository_.
 
 - **Bitbucket Cloud branch** - The branch from which to ingress new versions. This
-defaults to the value GitHub provides as the default branch for this repository.
+defaults to the value Bitbucket Cloud provides as the default branch for this repository.
 
 - **Path to directory of Terraform files** - The repository's subdirectory that
 contains its terraform files. This defaults to the root of the repository.
 
+**Note**: Users creating, updating, or deleting webhooks via the API must have `owner` or `admin` permissions enabled on the target Bitbucket Cloud repository. To update user permissions on the target repository the repository owner can visit: https://bitbucket.org/your-username/your-repository/admin/access
+
 ### Connecting a Bitbucket Cloud Repository to a Terraform Environment
 
-Navigate to https://atlas.hashicorp.com/configurations/import and select Link to Bitbucket Cloud. A menu will appear asking you to name the environment. Then use the autocomplete field for repository and select the repository for which you'd like to create a webhook & environment. If necessary, fill out information about the VCS branch to pull from as well as the directory where the Terraform files live within the repository. Click Create and Continue.
+Navigate to https://atlas.hashicorp.com/configurations/import and select Link to Bitbucket Cloud. A menu will appear asking you to name the environment. Then use the autocomplete field for repository and select the repository for which you'd like to create a webhook & environment. If you do not see the repository you would like to connect to in the drop down, manually enter it using the format: username/repository. If necessary, fill out information about the VCS branch to pull from as well as the directory where the Terraform files live within the repository. Click Create and Continue.
 
 Upon success, you will be redirected to the environment's runs page (https://atlas.hashicorp.com/terraform/your-organization/environments/your-environment/changes/runs). A message will display letting you know that the repository is ingressing from Bitbucket and once finished you will be able to Queue, Run, & Apply a Terraform Plan. Depending on your webhook settings, changes will be triggered through git events on the specified branch.
 
