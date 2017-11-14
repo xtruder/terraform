@@ -44,8 +44,8 @@ func TestOrphanResourceTransformer(t *testing.T) {
 
 	{
 		tf := &OrphanResourceTransformer{
-			Concrete: testOrphanResourceConcreteFunc,
-			State:    state, Module: mod,
+			ConcreteManaged: testOrphanResourceConcreteFunc,
+			State:           state, Module: mod,
 		}
 		if err := tf.Transform(&g); err != nil {
 			t.Fatalf("err: %s", err)
@@ -75,8 +75,8 @@ func TestOrphanResourceTransformer_nilModule(t *testing.T) {
 
 	{
 		tf := &OrphanResourceTransformer{
-			Concrete: testOrphanResourceConcreteFunc,
-			State:    state, Module: mod,
+			ConcreteManaged: testOrphanResourceConcreteFunc,
+			State:           state, Module: mod,
 		}
 		if err := tf.Transform(&g); err != nil {
 			t.Fatalf("err: %s", err)
@@ -119,8 +119,8 @@ func TestOrphanResourceTransformer_countGood(t *testing.T) {
 
 	{
 		tf := &OrphanResourceTransformer{
-			Concrete: testOrphanResourceConcreteFunc,
-			State:    state, Module: mod,
+			ConcreteManaged: testOrphanResourceConcreteFunc,
+			State:           state, Module: mod,
 		}
 		if err := tf.Transform(&g); err != nil {
 			t.Fatalf("err: %s", err)
@@ -169,8 +169,8 @@ func TestOrphanResourceTransformer_countBad(t *testing.T) {
 
 	{
 		tf := &OrphanResourceTransformer{
-			Concrete: testOrphanResourceConcreteFunc,
-			State:    state, Module: mod,
+			ConcreteManaged: testOrphanResourceConcreteFunc,
+			State:           state, Module: mod,
 		}
 		if err := tf.Transform(&g); err != nil {
 			t.Fatalf("err: %s", err)
@@ -224,8 +224,8 @@ func TestOrphanResourceTransformer_modules(t *testing.T) {
 
 	{
 		tf := &OrphanResourceTransformer{
-			Concrete: testOrphanResourceConcreteFunc,
-			State:    state, Module: mod,
+			ConcreteManaged: testOrphanResourceConcreteFunc,
+			State:           state, Module: mod,
 		}
 		if err := tf.Transform(&g); err != nil {
 			t.Fatalf("err: %s", err)

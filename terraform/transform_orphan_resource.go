@@ -13,7 +13,8 @@ import (
 // This only adds orphans that have no representation at all in the
 // configuration.
 type OrphanResourceTransformer struct {
-	Concrete ConcreteResourceNodeFunc
+	ConcreteManaged ConcreteResourceNodeFunc
+	ConcreteData    ConcreteResourceNodeFunc
 
 	// State is the global state. We require the global state to
 	// properly find module orphans at our path.
@@ -64,21 +65,21 @@ func (t *OrphanResourceTransformer) transform(g *Graph, ms *ModuleState) error {
 			return err
 		}
 
-		if addr.Mode != t.Mode {
-			continue
-		}
-
 		addr.Path = ms.Path[1:]
 
-		// Build the abstract node and the concrete one
-		abstract := &NodeAbstractResource{Addr: addr}
-		var node dag.Vertex = abstract
-		if f := t.Concrete; f != nil {
-			node = f(abstract)
+		var concrete ConcreteResourceNodeFunc
+		switch addr.Mode {
+		case config.ManagedResourceMode:
+			concrete = t.ConcreteManaged
+		case config.DataResourceMode:
+			concrete = t.ConcreteData
 		}
 
-		// Add it to the graph
-		g.Add(node)
+		if concrete == nil {
+			concrete = func(a *NodeAbstractResource) dag.Vertex { return a }
+		}
+		// Build the abstract node and the concrete one and add it to the graph
+		g.Add(concrete(&NodeAbstractResource{Addr: addr}))
 	}
 
 	return nil

@@ -80,7 +80,7 @@ func (b *RefreshGraphBuilder) Steps() []GraphTransformer {
 		}
 	}
 
-	concreteDataDestroyInstance := func(a *NodeAbstractResource) dag.Vertex {
+	concreteDataRemovedInstance := func(a *NodeAbstractResource) dag.Vertex {
 		return &NodeDestroyableDataResource{
 			NodeAbstractResource: a,
 		}
@@ -118,16 +118,10 @@ func (b *RefreshGraphBuilder) Steps() []GraphTransformer {
 		// removed completely, not ones that are just orphaned due to a scaled-in
 		// count.
 		&OrphanResourceTransformer{
-			Concrete: concreteManagedResourceInstance,
-			State:    b.State,
-			Module:   b.Module,
-			Mode:     config.ManagedResourceMode,
-		},
-		&OrphanResourceTransformer{
-			Concrete: concreteDataDestroyInstance,
-			State:    b.State,
-			Module:   b.Module,
-			Mode:     config.DataResourceMode,
+			ConcreteManaged: concreteManagedResourceInstance,
+			ConcreteData:    concreteDataRemovedInstance,
+			State:           b.State,
+			Module:          b.Module,
 		},
 
 		// Attach the state

@@ -43,10 +43,11 @@ type PlanGraphBuilder struct {
 	// CustomConcrete can be set to customize the node types created
 	// for various parts of the plan. This is useful in order to customize
 	// the plan behavior.
-	CustomConcrete         bool
-	ConcreteProvider       ConcreteProviderNodeFunc
-	ConcreteResource       ConcreteResourceNodeFunc
-	ConcreteResourceOrphan ConcreteResourceNodeFunc
+	CustomConcrete              bool
+	ConcreteProvider            ConcreteProviderNodeFunc
+	ConcreteResource            ConcreteResourceNodeFunc
+	ConcreteResourceOrphan      ConcreteResourceNodeFunc
+	ConcreteResourceDataRemoved ConcreteResourceNodeFunc
 
 	once sync.Once
 }
@@ -79,9 +80,10 @@ func (b *PlanGraphBuilder) Steps() []GraphTransformer {
 
 		// Add orphan resources
 		&OrphanResourceTransformer{
-			Concrete: b.ConcreteResourceOrphan,
-			State:    b.State,
-			Module:   b.Module,
+			ConcreteManaged: b.ConcreteResourceOrphan,
+			ConcreteData:    b.ConcreteResourceDataRemoved,
+			State:           b.State,
+			Module:          b.Module,
 		},
 
 		// Create orphan output nodes
@@ -175,6 +177,12 @@ func (b *PlanGraphBuilder) init() {
 
 	b.ConcreteResourceOrphan = func(a *NodeAbstractResource) dag.Vertex {
 		return &NodePlannableResourceOrphan{
+			NodeAbstractResource: a,
+		}
+	}
+
+	b.ConcreteResourceDataRemoved = func(a *NodeAbstractResource) dag.Vertex {
+		return &NodeDestroyableDataResource{
 			NodeAbstractResource: a,
 		}
 	}
