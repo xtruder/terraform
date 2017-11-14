@@ -22,6 +22,8 @@ type OrphanResourceTransformer struct {
 	// Module is the root module. We'll look up the proper configuration
 	// using the graph path.
 	Module *module.Tree
+
+	Mode config.ResourceMode
 }
 
 func (t *OrphanResourceTransformer) Transform(g *Graph) error {
@@ -61,6 +63,11 @@ func (t *OrphanResourceTransformer) transform(g *Graph, ms *ModuleState) error {
 		if err != nil {
 			return err
 		}
+
+		if addr.Mode != t.Mode {
+			continue
+		}
+
 		addr.Path = ms.Path[1:]
 
 		// Build the abstract node and the concrete one

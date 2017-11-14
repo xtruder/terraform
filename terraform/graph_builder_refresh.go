@@ -80,6 +80,12 @@ func (b *RefreshGraphBuilder) Steps() []GraphTransformer {
 		}
 	}
 
+	concreteDataDestroyInstance := func(a *NodeAbstractResource) dag.Vertex {
+		return &NodeDestroyableDataResource{
+			NodeAbstractResource: a,
+		}
+	}
+
 	steps := []GraphTransformer{
 		// Creates all the managed resources that aren't in the state, but only if
 		// we have a state already. No resources in state means there's not
@@ -115,6 +121,13 @@ func (b *RefreshGraphBuilder) Steps() []GraphTransformer {
 			Concrete: concreteManagedResourceInstance,
 			State:    b.State,
 			Module:   b.Module,
+			Mode:     config.ManagedResourceMode,
+		},
+		&OrphanResourceTransformer{
+			Concrete: concreteDataDestroyInstance,
+			State:    b.State,
+			Module:   b.Module,
+			Mode:     config.DataResourceMode,
 		},
 
 		// Attach the state

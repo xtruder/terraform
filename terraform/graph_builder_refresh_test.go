@@ -77,18 +77,18 @@ func TestRefreshGraphBuilder_configOrphans(t *testing.T) {
 	actual := g.StringWithNodeTypes()
 	expected := `aws_instance.foo - *terraform.NodeRefreshableManagedResource
   provider.aws - *terraform.NodeApplyableProvider
-data.aws_instance.foo[0] - *terraform.NodeRefreshableManagedResourceInstance
+data.aws_instance.foo[0] - *terraform.NodeDestroyableDataResource
   provider.aws - *terraform.NodeApplyableProvider
-data.aws_instance.foo[1] - *terraform.NodeRefreshableManagedResourceInstance
+data.aws_instance.foo[1] - *terraform.NodeDestroyableDataResource
   provider.aws - *terraform.NodeApplyableProvider
-data.aws_instance.foo[2] - *terraform.NodeRefreshableManagedResourceInstance
+data.aws_instance.foo[2] - *terraform.NodeDestroyableDataResource
   provider.aws - *terraform.NodeApplyableProvider
 provider.aws - *terraform.NodeApplyableProvider
 provider.aws (close) - *terraform.graphNodeCloseProvider
   aws_instance.foo - *terraform.NodeRefreshableManagedResource
-  data.aws_instance.foo[0] - *terraform.NodeRefreshableManagedResourceInstance
-  data.aws_instance.foo[1] - *terraform.NodeRefreshableManagedResourceInstance
-  data.aws_instance.foo[2] - *terraform.NodeRefreshableManagedResourceInstance
+  data.aws_instance.foo[0] - *terraform.NodeDestroyableDataResource
+  data.aws_instance.foo[1] - *terraform.NodeDestroyableDataResource
+  data.aws_instance.foo[2] - *terraform.NodeDestroyableDataResource
 `
 	if expected != actual {
 		t.Fatalf("Expected:\n%s\nGot:\n%s", expected, actual)

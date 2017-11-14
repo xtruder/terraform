@@ -3,7 +3,6 @@ package terraform
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/config"
 	"github.com/hashicorp/terraform/dag"
 )
 
@@ -91,32 +90,10 @@ func (n *NodeRefreshableManagedResourceInstance) DestroyAddr() *ResourceAddress 
 
 // GraphNodeEvalable
 func (n *NodeRefreshableManagedResourceInstance) EvalTree() EvalNode {
-	// Eval info is different depending on what kind of resource this is
-	switch mode := n.Addr.Mode; mode {
-	case config.ManagedResourceMode:
-		if n.ResourceState == nil {
-			return n.evalTreeManagedResourceNoState()
-		}
-		return n.evalTreeManagedResource()
-
-	case config.DataResourceMode:
-		// Get the data source node. If we don't have a configuration
-		// then it is an orphan so we destroy it (remove it from the state).
-		var dn GraphNodeEvalable
-		if n.Config != nil {
-			dn = &NodeRefreshableDataResourceInstance{
-				NodeAbstractResource: n.NodeAbstractResource,
-			}
-		} else {
-			dn = &NodeDestroyableDataResource{
-				NodeAbstractResource: n.NodeAbstractResource,
-			}
-		}
-
-		return dn.EvalTree()
-	default:
-		panic(fmt.Errorf("unsupported resource mode %s", mode))
+	if n.ResourceState == nil {
+		return n.evalTreeManagedResourceNoState()
 	}
+	return n.evalTreeManagedResource()
 }
 
 func (n *NodeRefreshableManagedResourceInstance) evalTreeManagedResource() EvalNode {
