@@ -117,7 +117,7 @@ func (b *RefreshGraphBuilder) Steps() []GraphTransformer {
 		// Add any fully-orphaned resources from config (ones that have been
 		// removed completely, not ones that are just orphaned due to a scaled-in
 		// count.
-		&OrphanResourceTransformer{
+		&RemovedResourceTransformer{
 			ConcreteManaged: concreteManagedResourceInstance,
 			ConcreteData:    concreteDataRemovedInstance,
 			State:           b.State,

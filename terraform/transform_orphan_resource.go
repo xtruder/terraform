@@ -6,13 +6,13 @@ import (
 	"github.com/hashicorp/terraform/dag"
 )
 
-// OrphanResourceTransformer is a GraphTransformer that adds resource
+// RemovedResourceTransformer is a GraphTransformer that adds resource
 // orphans to the graph. A resource orphan is a resource that is
 // represented in the state but not in the configuration.
 //
 // This only adds orphans that have no representation at all in the
 // configuration.
-type OrphanResourceTransformer struct {
+type RemovedResourceTransformer struct {
 	ConcreteManaged ConcreteResourceNodeFunc
 	ConcreteData    ConcreteResourceNodeFunc
 
@@ -27,7 +27,7 @@ type OrphanResourceTransformer struct {
 	Mode config.ResourceMode
 }
 
-func (t *OrphanResourceTransformer) Transform(g *Graph) error {
+func (t *RemovedResourceTransformer) Transform(g *Graph) error {
 	if t.State == nil {
 		// If the entire state is nil, there can't be any orphans
 		return nil
@@ -44,7 +44,7 @@ func (t *OrphanResourceTransformer) Transform(g *Graph) error {
 	return nil
 }
 
-func (t *OrphanResourceTransformer) transform(g *Graph, ms *ModuleState) error {
+func (t *RemovedResourceTransformer) transform(g *Graph, ms *ModuleState) error {
 	if ms == nil {
 		return nil
 	}

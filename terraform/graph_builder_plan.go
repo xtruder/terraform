@@ -79,7 +79,7 @@ func (b *PlanGraphBuilder) Steps() []GraphTransformer {
 		&OutputTransformer{Module: b.Module},
 
 		// Add orphan resources
-		&OrphanResourceTransformer{
+		&RemovedResourceTransformer{
 			ConcreteManaged: b.ConcreteResourceOrphan,
 			ConcreteData:    b.ConcreteResourceDataRemoved,
 			State:           b.State,

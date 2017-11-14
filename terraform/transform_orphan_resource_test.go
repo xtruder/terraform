@@ -43,7 +43,7 @@ func TestOrphanResourceTransformer(t *testing.T) {
 	}
 
 	{
-		tf := &OrphanResourceTransformer{
+		tf := &RemovedResourceTransformer{
 			ConcreteManaged: testOrphanResourceConcreteFunc,
 			State:           state, Module: mod,
 		}
@@ -74,7 +74,7 @@ func TestOrphanResourceTransformer_nilModule(t *testing.T) {
 	}
 
 	{
-		tf := &OrphanResourceTransformer{
+		tf := &RemovedResourceTransformer{
 			ConcreteManaged: testOrphanResourceConcreteFunc,
 			State:           state, Module: mod,
 		}
@@ -118,7 +118,7 @@ func TestOrphanResourceTransformer_countGood(t *testing.T) {
 	}
 
 	{
-		tf := &OrphanResourceTransformer{
+		tf := &RemovedResourceTransformer{
 			ConcreteManaged: testOrphanResourceConcreteFunc,
 			State:           state, Module: mod,
 		}
@@ -168,7 +168,7 @@ func TestOrphanResourceTransformer_countBad(t *testing.T) {
 	}
 
 	{
-		tf := &OrphanResourceTransformer{
+		tf := &RemovedResourceTransformer{
 			ConcreteManaged: testOrphanResourceConcreteFunc,
 			State:           state, Module: mod,
 		}
@@ -223,7 +223,7 @@ func TestOrphanResourceTransformer_modules(t *testing.T) {
 	}
 
 	{
-		tf := &OrphanResourceTransformer{
+		tf := &RemovedResourceTransformer{
 			ConcreteManaged: testOrphanResourceConcreteFunc,
 			State:           state, Module: mod,
 		}
